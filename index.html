@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LisaLena — Trivias de Personalidade com Duas Opções</title>
+  <meta name="description" content="LisaLena é um projeto de trivias no qual as irmãs gêmeas Lisa e Lena propõem escolhas entre duas opções para revelar aspectos da sua personalidade." />
+  <meta property="og:title" content="LisaLena — Trivias de Personalidade" />
+  <meta property="og:description" content="Escolha entre duas opções em trivias rápidas criadas por Lisa e Lena e descubra traços da sua personalidade." />
+  <meta name="theme-color" content="#7c3aed" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b12;          /* fundo escuro elegante */
+      --panel:#131323;       /* cartões */
+      --muted:#a8a8c0;       /* texto secundário */
+      --text:#ffffff;        /* texto principal */
+      --brand:#8b5cf6;       /* roxo vibrante */
+      --brand-2:#22d3ee;     /* ciano de apoio */
+      --ok:#10b981;          /* verde */
+      --warn:#f59e0b;        /* amarelo */
+      --danger:#ef4444;      /* vermelho */
+      --radius:18px;
+      --shadow:0 20px 50px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:radial-gradient(1200px 800px at 10% -10%, rgba(139,92,246,.25), transparent 60%),
+                 radial-gradient(1000px 700px at 110% 10%, rgba(34,211,238,.22), transparent 55%),
+                 var(--bg);
+      line-height:1.6;
+      letter-spacing:.2px;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:20; backdrop-filter:blur(8px);
+      background:linear-gradient(to bottom, rgba(11,11,18,.8), rgba(11,11,18,.35));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:800; font-size:1.1rem;
+      letter-spacing:.5px;
+    }
+    .logo{
+      width:36px; height:36px; border-radius:12px;
+      background: conic-gradient(from 210deg, var(--brand), var(--brand-2));
+      box-shadow:0 10px 22px rgba(139,92,246,.35), inset 0 0 12px rgba(255,255,255,.15);
+    }
+    .cta{display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:999px;
+      background:linear-gradient(135deg, var(--brand), var(--brand-2));
+      color:#0b0b12; font-weight:700; box-shadow:var(--shadow); border:0; cursor:pointer}
+    .cta:hover{transform:translateY(-1px)}
+
+    /* Hero */
+    .hero{display:grid; grid-template-columns:1.2fr 1fr; gap:28px; padding:64px 24px; align-items:center}
+    .hero h1{font-size:clamp(2rem, 4vw, 3.2rem); line-height:1.1; margin:0 0 16px}
+    .hero p{color:var(--muted); margin:0 0 22px}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid rgba(255,255,255,.12);
+      border-radius:999px; font-size:.9rem; color:#eaeaf7; backdrop-filter:blur(6px)}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+
+    /* Seções */
+    section{padding:36px 24px}
+    h2{font-size:1.6rem; margin:0 0 8px}
+    .sub{color:var(--muted); margin-top:0}
+
+    .grid{display:grid; gap:18px}
+    @media(min-width:800px){
+      .grid-3{grid-template-columns:repeat(3, 1fr)}
+      .grid-2{grid-template-columns:repeat(2, 1fr)}
+    }
+
+    .badge{font-size:.75rem; padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:#dcdcf2}
+    .muted{color:var(--muted)}
+
+    /* Demo Trivia */
+    .demo{
+      display:flex; flex-direction:column; gap:14px
+    }
+    .options{display:grid; gap:12px}
+    @media(min-width:680px){.options{grid-template-columns:1fr 1fr}}
+    .option{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:16px; border-radius:14px; border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      cursor:pointer; transition:transform .06s ease-out;
+    }
+    .option:hover{transform:translateY(-1px)}
+    .option[data-picked="true"]{outline:2px solid var(--brand);}
+    .bar{height:8px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden}
+    .fill{height:100%; width:0%; background:linear-gradient(90deg, var(--brand), var(--brand-2)); transition:width .35s ease}
+    .kpis{display:flex; gap:16px; align-items:center; color:var(--muted); font-size:.95rem}
+
+    /* Rodapé */
+    footer{padding:40px 24px; color:var(--muted); border-top:1px solid rgba(255,255,255,.06)}
+    .footer-grid{display:grid; gap:16px}
+    @media(min-width:720px){.footer-grid{grid-template-columns:1fr auto}}
+
+    /* Acessibilidade */
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand" aria-label="LisaLena">
+        <div class="logo" aria-hidden="true"></div>
+        Lisa<span style="opacity:.7">Lena</span>
+      </div>
+      <a class="cta" href="#demo" aria-label="Experimentar uma trivia agora">Experimentar agora</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="container hero">
+      <div>
+        <span class="pill" aria-hidden="true">Projeto • Beta</span>
+        <h1>LisaLena — trivias rápidas para revelar traços da sua personalidade</h1>
+        <p>
+          <strong>Lisa</strong> e <strong>Lena</strong> são irmãs gêmeas que amam psicologia pop e jogos sociais.
+          Juntas, elas criam <em>trivias</em> em que você escolhe entre <strong>duas opções</strong> —
+          cada escolha desbloqueia um pequeno insight sobre <u>como você pensa, sente e decide</u>.
+        </p>
+        <div class="kpis" role="list" aria-label="Destaques do projeto">
+          <span class="badge" role="listitem">Sessões de 60s</span>
+          <span class="badge" role="listitem">Feedback imediato</span>
+          <span class="badge" role="listitem">Compartilhável</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="margin-top:0">Como funciona?</h2>
+        <p class="muted" style="margin-bottom:12px">
+          A cada rodada, Lisa e Lena propõem um dilema com duas opções. Você clica, vê a distribuição das escolhas
+          dos outros participantes e lê um comentário rápido das gêmeas.
+        </p>
+        <ul class="muted" style="padding-left:18px; margin:0">
+          <li>Trivias curtas, objetivas e divertidas.</li>
+          <li>Resultados agregados e comentários leves (sem diagnósticos!).</li>
+          <li>Opção de salvar seu perfil de preferências.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="container grid grid-2">
+      <article class="card">
+        <h2>Quem são Lisa e Lena?</h2>
+        <p class="sub">Personalidades complementares, opiniões sinceras.</p>
+        <p>
+          <strong>Lisa</strong> é analítica, prática e adora dados. <strong>Lena</strong> é criativa, empática e
+          valoriza o contexto. Em cada pergunta, elas oferecem duas perspectivas — nenhuma está "certa" ou "errada",
+          são apenas <em>lentes</em> diferentes para enxergar o mundo.
+        </p>
+      </article>
+      <article class="card">
+        <h2>Por que duas opções?</h2>
+        <p class="sub">Foco, ritmo e menos sobrecarga cognitiva.</p>
+        <p>
+          Escolhas binárias aceleram a interação e possibilitam comparações claras entre perfis. O objetivo
+          não é rotular, e sim <strong>provocar reflexão</strong> com leveza.
+        </p>
+      </article>
+    </section>
+
+    <!-- DEMO INTERATIVA -->
+    <section id="demo" class="container">
+      <div class="card">
+        <div class="demo" aria-live="polite">
+          <div>
+            <h2 style="margin:0">Experimente uma trivia</h2>
+            <p class="sub">Escolha uma opção e veja como você se compara aos outros.</p>
+          </div>
+          <div id="prompt" style="font-weight:600; font-size:1.05rem">Quando surge uma ideia nova, você…</div>
+          <div class="options" role="group" aria-label="Opções de resposta">
+            <button class="option" data-side="lisa" aria-pressed="false">
+              <span>
+                <strong>Lisa:</strong> cria um plano e testa rápido
+              </span>
+              <span class="badge" aria-hidden="true">Praticidade</span>
+            </button>
+            <button class="option" data-side="lena" aria-pressed="false">
+              <span>
+                <strong>Lena:</strong> imagina possibilidades e refina a visão
+              </span>
+              <span class="badge" aria-hidden="true">Imaginação</span>
+            </button>
+          </div>
+          <div class="bar" aria-hidden="true"><div class="fill" id="fill"></div></div>
+          <div class="kpis" id="stats">
+            <span id="ratio">50% Lisa • 50% Lena</span>
+            <span class="badge" id="insight">Dica das gêmeas</span>
+          </div>
+          <p id="comment" class="muted" style="margin:0">
+            Clique em uma das opções para ver o comentário das gêmeas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTRUTURA DO PROJETO -->
+    <section class="container grid grid-3">
+      <article class="card">
+        <h2>Trilhas temáticas</h2>
+        <p class="muted">Criatividade, decisões, colaboração, hábitos e mais.</p>
+        <p>As trivias são agrupadas em trilhas curtas (3–5 perguntas) para você explorar áreas específicas do seu estilo.</p>
+      </article>
+      <article class="card">
+        <h2>Perfis agregados</h2>
+        <p class="muted">Seu mapa de preferências em construção.</p>
+        <p>À medida que responde, você vê um resumo visual do seu viés atual — e como ele muda com o tempo.</p>
+      </article>
+      <article class="card">
+        <h2>Compartilhável</h2>
+        <p class="muted">Compare com amigos e equipes.</p>
+        <p>Compartilhe resultados, convide pessoas e gere debates saudáveis em grupos.</p>
+      </article>
+    </section>
+
+    <!-- CHAMADA FINAL -->
+    <section class="container">
+      <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0">Pronto para conhecer seu lado Lisa ou Lena?</h2>
+          <p class="sub" style="margin:6px 0 0">Participe de uma trilha de 60 segundos e receba insights imediatos.</p>
+        </div>
+        <a class="cta" href="#demo">Começar agora</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <p>© <span id="year"></span> LisaLena — Um projeto de trivias de personalidade com as gêmeas Lisa e Lena.</p>
+      <div style="display:flex; gap:10px; align-items:center">
+        <span class="badge">Privacidade primeiro</span>
+        <span class="badge">Sem rastreio invasivo</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Ano atual no rodapé
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Demo simples com contagem local (mock)
+    const state = { lisa: 50, lena: 50, total: 100, picked: null };
+    const options = document.querySelectorAll('.option');
+    const fill = document.getElementById('fill');
+    const ratio = document.getElementById('ratio');
+    const comment = document.getElementById('comment');
+    const insight = document.getElementById('insight');
+
+    const comments = {
+      lisa: {
+        tag: 'Viés para ação',
+        text: 'Você tende a transformar ideias em experimentos rapidamente. Isso reduz incertezas, mas lembre-se de reservar tempo para imaginar alternativas.'
+      },
+      lena: {
+        tag: 'Viés para visão',
+        text: 'Você explora cenários e possibilidades antes de agir. Isso amplia repertório, mas marcar um primeiro passo ajuda a ganhar tração.'
+      }
+    };
+
+    function render(){
+      const percentLisa = Math.round((state.lisa / state.total) * 100);
+      const percentLena = 100 - percentLisa;
+      ratio.textContent = `${percentLisa}% Lisa • ${percentLena}% Lena`;
+      fill.style.width = `${percentLisa}%`;
+      options.forEach(btn => {
+        const picked = btn.dataset.side === state.picked;
+        btn.dataset.picked = picked ? 'true' : 'false';
+        btn.setAttribute('aria-pressed', picked ? 'true' : 'false');
+      });
+    }
+
+    options.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const side = btn.dataset.side;
+        if(state.picked) return; // impede múltiplos cliques nesta demo
+        state.picked = side;
+        state[side] += 1; state.total += 1;
+        render();
+        insight.textContent = comments[side].tag;
+        comment.textContent = comments[side].text;
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
